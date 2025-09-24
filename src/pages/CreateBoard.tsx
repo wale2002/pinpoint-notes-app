@@ -1,30 +1,37 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Plus } from 'lucide-react';
-import { boardAPI } from '@/lib/api';
-import { useToast } from '@/hooks/use-toast';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ArrowLeft, Plus } from "lucide-react";
+import { boardAPI } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const CreateBoard: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    name: '',
-    category: ''
+    name: "",
+    category: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim()) {
       toast({
         title: "Error",
         description: "Board name is required",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -33,20 +40,20 @@ const CreateBoard: React.FC = () => {
     try {
       await boardAPI.create({
         name: formData.name.trim(),
-        category: formData.category.trim() || undefined
+        category: formData.category.trim() || undefined,
       });
-      
+
       toast({
         title: "Success!",
-        description: "Board created successfully"
+        description: "Board created successfully",
       });
-      
-      navigate('/boards');
+
+      navigate("/boards");
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to create board",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -54,9 +61,9 @@ const CreateBoard: React.FC = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -66,7 +73,7 @@ const CreateBoard: React.FC = () => {
       <header className="container mx-auto px-4 py-6">
         <Button
           variant="ghost"
-          onClick={() => navigate('/')}
+          onClick={() => navigate("/")}
           className="flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -78,8 +85,12 @@ const CreateBoard: React.FC = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Create New Board</h1>
-            <p className="text-muted-foreground">Start organizing your thoughts with a new board</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Create New Board
+            </h1>
+            <p className="text-muted-foreground">
+              Start organizing your thoughts with a new board
+            </p>
           </div>
 
           <Card className="shadow-card">
@@ -125,17 +136,13 @@ const CreateBoard: React.FC = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate("/")}
                     className="flex-1"
                   >
                     Cancel
                   </Button>
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="flex-1"
-                  >
-                    {isLoading ? 'Creating...' : 'Create Board'}
+                  <Button type="submit" disabled={isLoading} className="flex-1">
+                    {isLoading ? "Creating..." : "Create Board"}
                   </Button>
                 </div>
               </form>

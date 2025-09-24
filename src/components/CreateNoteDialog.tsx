@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, X } from 'lucide-react';
-import { noteAPI } from '@/lib/api';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Plus, X } from "lucide-react";
+import { noteAPI } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 interface CreateNoteDialogProps {
   isOpen: boolean;
@@ -17,29 +29,24 @@ interface CreateNoteDialogProps {
 }
 
 const colorOptions = [
-  { value: '#ffeb3b', label: 'Yellow', class: 'bg-sticky-yellow' },
-  { value: '#e91e63', label: 'Pink', class: 'bg-sticky-pink' },
-  { value: '#2196f3', label: 'Blue', class: 'bg-sticky-blue' },
-  { value: '#4caf50', label: 'Green', class: 'bg-sticky-green' },
-  { value: '#ff9800', label: 'Orange', class: 'bg-sticky-orange' },
-  { value: '#9c27b0', label: 'Purple', class: 'bg-sticky-purple' },
+  { value: "#ffeb3b", label: "Yellow", class: "bg-sticky-yellow" },
+  { value: "#e91e63", label: "Pink", class: "bg-sticky-pink" },
+  { value: "#2196f3", label: "Blue", class: "bg-sticky-blue" },
+  { value: "#4caf50", label: "Green", class: "bg-sticky-green" },
+  { value: "#ff9800", label: "Orange", class: "bg-sticky-orange" },
+  { value: "#9c27b0", label: "Purple", class: "bg-sticky-purple" },
 ];
 
 const categoryOptions = [
-  'To-Do',
-  'In Progress',
-  'Completed',
-  'Ideas',
-  'Notes',
-  'Reminders',
+  "To-Do",
+  "In Progress",
+  "Completed",
+  "Ideas",
+  "Notes",
+  "Reminders",
 ];
 
-const priorityOptions = [
-  'Low',
-  'Medium',
-  'High',
-  'Urgent',
-];
+const priorityOptions = ["Low", "Medium", "High", "Urgent"];
 
 const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
   isOpen,
@@ -49,25 +56,27 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
 }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: 'To-Do',
-    color: '#ffeb3b',
-    priority: '',
-    completionStatus: '',
+    title: "",
+    description: "",
+    category: "To-Do",
+    color: "#ffeb3b",
+    priority: "",
+    completionStatus: "",
   });
-  const [todos, setTodos] = useState<Array<{ text: string; checked: boolean }>>([]);
-  const [newTodo, setNewTodo] = useState('');
+  const [todos, setTodos] = useState<Array<{ text: string; checked: boolean }>>(
+    []
+  );
+  const [newTodo, setNewTodo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim()) {
       toast({
         title: "Error",
         description: "Note title is required",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -84,30 +93,35 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
         priority: formData.priority || undefined,
         completionStatus: formData.completionStatus || undefined,
       });
-      
+
       toast({
         title: "Success!",
-        description: "Note created successfully"
+        description: "Note created successfully",
       });
-      
+
       // Reset form
       setFormData({
-        title: '',
-        description: '',
-        category: 'To-Do',
-        color: '#ffeb3b',
-        priority: '',
-        completionStatus: '',
+        title: "",
+        description: "",
+        category: "To-Do",
+        color: "#ffeb3b",
+        priority: "",
+        completionStatus: "",
       });
       setTodos([]);
-      setNewTodo('');
-      
+      setNewTodo("");
+
       onNoteCreated();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = "Failed to create note";
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        errorMessage = err.response?.data?.message || errorMessage;
+      }
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to create note",
-        variant: "destructive"
+        description: errorMessage,
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -115,24 +129,26 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const addTodo = () => {
     if (newTodo.trim()) {
-      setTodos(prev => [...prev, { text: newTodo.trim(), checked: false }]);
-      setNewTodo('');
+      setTodos((prev) => [...prev, { text: newTodo.trim(), checked: false }]);
+      setNewTodo("");
     }
   };
 
   const removeTodo = (index: number) => {
-    setTodos(prev => prev.filter((_, i) => i !== index));
+    setTodos((prev) => prev.filter((_, i) => i !== index));
   };
 
   const toggleTodo = (index: number) => {
-    setTodos(prev => prev.map((todo, i) => 
-      i === index ? { ...todo, checked: !todo.checked } : todo
-    ));
+    setTodos((prev) =>
+      prev.map((todo, i) =>
+        i === index ? { ...todo, checked: !todo.checked } : todo
+      )
+    );
   };
 
   return (
@@ -152,7 +168,7 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
+              onChange={(e) => handleInputChange("title", e.target.value)}
               placeholder="Enter note title..."
               required
             />
@@ -164,13 +180,13 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
               <Label>Category *</Label>
               <Select
                 value={formData.category}
-                onValueChange={(value) => handleInputChange('category', value)}
+                onValueChange={(value) => handleInputChange("category", value)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {categoryOptions.map(category => (
+                  {categoryOptions.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>
@@ -183,13 +199,13 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
               <Label>Color *</Label>
               <Select
                 value={formData.color}
-                onValueChange={(value) => handleInputChange('color', value)}
+                onValueChange={(value) => handleInputChange("color", value)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {colorOptions.map(color => (
+                  {colorOptions.map((color) => (
                     <SelectItem key={color.value} value={color.value}>
                       <div className="flex items-center gap-2">
                         <div className={`w-4 h-4 rounded ${color.class}`} />
@@ -208,7 +224,7 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
+              onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="Add details..."
               rows={3}
             />
@@ -220,13 +236,13 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
               <Label>Priority</Label>
               <Select
                 value={formData.priority}
-                onValueChange={(value) => handleInputChange('priority', value)}
+                onValueChange={(value) => handleInputChange("priority", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent>
-                  {priorityOptions.map(priority => (
+                  {priorityOptions.map((priority) => (
                     <SelectItem key={priority} value={priority}>
                       {priority}
                     </SelectItem>
@@ -240,7 +256,9 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
               <Input
                 id="status"
                 value={formData.completionStatus}
-                onChange={(e) => handleInputChange('completionStatus', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("completionStatus", e.target.value)
+                }
                 placeholder="e.g., Draft, Review..."
               />
             </div>
@@ -254,7 +272,9 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
                 value={newTodo}
                 onChange={(e) => setNewTodo(e.target.value)}
                 placeholder="Add a to-do item..."
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTodo())}
+                onKeyPress={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), addTodo())
+                }
               />
               <Button type="button" onClick={addTodo} size="sm">
                 <Plus className="h-4 w-4" />
@@ -263,16 +283,25 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
             {todos.length > 0 && (
               <div className="space-y-1 max-h-32 overflow-y-auto">
                 {todos.map((todo, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 bg-muted rounded">
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 p-2 bg-muted rounded"
+                  >
                     <input
+                      id={`todo-${index}`}
                       type="checkbox"
                       checked={todo.checked}
                       onChange={() => toggleTodo(index)}
                       className="rounded"
                     />
-                    <span className={`flex-1 text-sm ${todo.checked ? 'line-through opacity-60' : ''}`}>
+                    <label
+                      htmlFor={`todo-${index}`}
+                      className={`flex-1 cursor-pointer text-sm ${
+                        todo.checked ? "line-through opacity-60" : ""
+                      }`}
+                    >
                       {todo.text}
-                    </span>
+                    </label>
                     <Button
                       type="button"
                       variant="ghost"
@@ -290,11 +319,16 @@ const CreateNoteDialog: React.FC<CreateNoteDialogProps> = ({
 
           {/* Actions */}
           <div className="flex gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading} className="flex-1">
-              {isLoading ? 'Creating...' : 'Create Note'}
+              {isLoading ? "Creating..." : "Create Note"}
             </Button>
           </div>
         </form>

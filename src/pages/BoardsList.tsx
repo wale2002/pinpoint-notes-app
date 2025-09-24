@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Plus, StickyNote, Calendar } from 'lucide-react';
-import { boardAPI } from '@/lib/api';
-import { useToast } from '@/hooks/use-toast';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ArrowLeft, Plus, StickyNote, Calendar } from "lucide-react";
+import { boardAPI } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 interface Board {
   name: string;
@@ -30,7 +37,7 @@ const BoardsList: React.FC = () => {
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to load boards",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -38,12 +45,12 @@ const BoardsList: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -54,14 +61,14 @@ const BoardsList: React.FC = () => {
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Button>
           <Button
-            onClick={() => navigate('/create-board')}
+            onClick={() => navigate("/create-board")}
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -73,12 +80,15 @@ const BoardsList: React.FC = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Your Boards</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Your Boards
+          </h1>
           <p className="text-muted-foreground">
-            {boards.length === 0 
-              ? "No boards yet. Create your first board to get started!" 
-              : `You have ${boards.length} board${boards.length === 1 ? '' : 's'}`
-            }
+            {boards.length === 0
+              ? "No boards yet. Create your first board to get started!"
+              : `You have ${boards.length} board${
+                  boards.length === 1 ? "" : "s"
+                }`}
           </p>
         </div>
 
@@ -90,10 +100,14 @@ const BoardsList: React.FC = () => {
           <div className="text-center py-12">
             <div className="bg-sticky-yellow p-8 rounded-lg shadow-sticky max-w-md mx-auto transform rotate-1">
               <StickyNote className="h-12 w-12 mx-auto mb-4 text-gray-700" />
-              <h3 className="text-lg font-bold text-gray-800 mb-2">No boards yet</h3>
-              <p className="text-gray-700 mb-4">Create your first board to start organizing your notes!</p>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">
+                No boards yet
+              </h3>
+              <p className="text-gray-700 mb-4">
+                Create your first board to start organizing your notes!
+              </p>
               <Button
-                onClick={() => navigate('/create-board')}
+                onClick={() => navigate("/create-board")}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -107,7 +121,9 @@ const BoardsList: React.FC = () => {
               <Card
                 key={index}
                 className="cursor-pointer hover:shadow-hover transition-all duration-200 transform hover:scale-105"
-                onClick={() => navigate(`/boards/${encodeURIComponent(board.name)}`)}
+                onClick={() =>
+                  navigate(`/boards/${encodeURIComponent(board.name)}`)
+                }
               >
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -115,7 +131,9 @@ const BoardsList: React.FC = () => {
                     {board.name}
                   </CardTitle>
                   <CardDescription className="flex items-center gap-4">
-                    <span>{board.noteCount} note{board.noteCount === 1 ? '' : 's'}</span>
+                    <span>
+                      {board.noteCount} note{board.noteCount === 1 ? "" : "s"}
+                    </span>
                     <span className="flex items-center gap-1 text-xs">
                       <Calendar className="h-3 w-3" />
                       {formatDate(board.lastUpdated)}
@@ -126,12 +144,14 @@ const BoardsList: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex gap-1">
                       {/* Visual indicator of note density */}
-                      {Array.from({ length: Math.min(board.noteCount, 5) }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="w-3 h-3 bg-primary/20 rounded-full"
-                        />
-                      ))}
+                      {Array.from({ length: Math.min(board.noteCount, 5) }).map(
+                        (_, i) => (
+                          <div
+                            key={i}
+                            className="w-3 h-3 bg-primary/20 rounded-full"
+                          />
+                        )
+                      )}
                       {board.noteCount > 5 && (
                         <span className="text-xs text-muted-foreground ml-1">
                           +{board.noteCount - 5}
