@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AxiosRequestConfig } from "axios";
 
-const API_BASE_URL = "https://pinpoint-notes-app.vercel.app/api/";
+const API_BASE_URL = "https://stickynote-rosy.vercel.app/api/";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
